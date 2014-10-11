@@ -15,19 +15,34 @@
   <div class="form-group">
     <%= f.label :text_to_encode, :class => "col-sm-2 control-label" %>
     <div class="col-sm-6">
-      <%= f.text_field :text_to_encode, :class => "form-control" %>
+      <%= f.text_field :text_to_encode, :class => "form-control", onkeydown: 'updateCharactersLeft();' %>
+    </div>
+    <div class="col-sm-3">
+      <div class="bs-callout bs-callout-success" id="chars_left_box">
+        <span id="characters_left"></span> characters left
+      </div>
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :size, :class => "col-sm-2 control-label" %>
-    <div class="col-sm-1">
-      <%= f.number_field :size, :class => "form-control", value: 1 %>
+    <%= f.label :size, 'Version: (1-40)', :class => "col-sm-2 control-label" %>
+    <div class="col-sm-2">
+      <%= f.number_field :size, :class => "form-control", value: 6, min: '1', max: '40', onchange: 'updateCapacity(); updateCharactersLeft();' %>
+    </div>
+    <div class="col-sm-3">
+      <div class="bs-callout bs-callout-info">
+        <span id="capacity"></span> characters allowed*
+      </div>
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :level, :class => "col-sm-2 control-label" %>
-    <div class="col-sm-1">
-      <%= f.select :level, options_for_select(%w(l m q h)), class: "form-control" %>
+    <%= f.label :level, 'Error Correction Level', :class => "col-sm-2 control-label" %>
+    <div class="col-sm-2" onchange="updateCapacity(); updateCharactersLeft();">
+      <%= select_tag :level, options_for_select(%w(Low Medium Quartile High), 'Low'), class: 'form-control', id: 'qrcode_level' %>
+    </div>
+    <div class="col-sm-4">
+      <div class="bs-callout bs-callout-warning">
+        Higher error correction => less characters
+      </div>
     </div>
   </div>
   <div class="form-group">
@@ -35,4 +50,54 @@
       <%= f.submit :class => "btn btn-primary" %>
     </div>
   </div>
+  <div class="row">
+    <div class="col-sm-offset-4 col-sm-6">
+      <div class="bs-callout bs-callout-info">
+      * This is an approximation of the allowed characters. It may be off by a few.
+      </div>
+    </div>
+  </div>
 <% end %>
+
+<script type="text/javascript">
+  var updateCapacity = function() {
+    var size = document.getElementById('qrcode_size').value;
+    var level = document.getElementById('qrcode_level').value;
+    var capacity = document.getElementById('capacity');
+
+    if (level == 'Low') {
+      capacity.textContent = Math.round(2.2647*size*size + 16.442*size + 8.4017);
+    } else if (level == 'Medium') {
+      capacity.textContent = Math.round(1.0853*size*size + 11.667*size + 14.435);
+    } else if ( level == 'Quartile' ) {
+      capacity.textContent = Math.round(1.2744*size*size + 8.9428*size + 6.8696);
+    } else if (level == 'High') {
+      capacity.textContent = Math.round(0.969*size*size + 7.2925*size + 1.9815);
+    }
+  };
+
+
+
+  var updateCharactersLeft = function() {
+    var capacity = parseInt(document.getElementById('capacity').textContent);
+    var charactersUsed = document.getElementById('qrcode_text_to_encode').value.length;
+    var charactersLeft = capacity - charactersUsed;
+    if (charactersLeft < 1) {
+      document.getElementById('characters_left').textContent = 'no';
+      document.getElementById('chars_left_box').className = 'bs-callout bs-callout-danger'
+
+
+    } else {
+      document.getElementById('characters_left').textContent = charactersLeft;
+      document.getElementById('chars_left_box').className = 'bs-callout bs-callout-success'
+    }
+  };
+
+
+
+
+  $(document).ready(function() {
+    updateCapacity();
+    updateCharactersLeft();
+  });
+</script>

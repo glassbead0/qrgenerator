@@ -1,28 +1,8 @@
-<style type="text/css">
-  table {
-    border-width: 0;
-    border-style: none;
-    border-color: #0000ff;
-    border-collapse: collapse;
-  }
-  td {
-    border-width: 0;
-    border-style: none;
-    border-color: #0000ff;
-    border-collapse: collapse;
-    padding: 0;
-    margin: 0;
-    width: 10px;
-    height: 10px;
-  }
-  td.black { background-color: #000; }
-  td.white { background-color: #fff; }
-</style>
 
 <div class="page-header">
-  <%= link_to qrcodes_path, :class => 'btn btn-default' do %>
+  <%= link_to qrcodes_path, :class => 'btn btn-primary' do %>
     <span class="glyphicon glyphicon-list-alt"></span>
-    Back
+    All QR codes
   <% end %>
   <%= link_to edit_qrcode_path(@qrcode), :class => 'btn btn-primary' do %>
     <span class="glyphicon glyphicon-pencil"></span>
@@ -35,28 +15,20 @@
   <dt>Text to encode:</dt>
   <dd><%= @qrcode.text_to_encode %></dd>
 
-  <dt>Size:</dt>
+  <dt>Version:</dt>
   <dd><%= @qrcode.size %></dd>
 
-  <dt>Level:</dt>
+  <dt>Error Correction Level:</dt>
   <dd><%= @qrcode.level %></dd>
 
-  <dt>QR Code</dt>
-      <dd>
-        <table>
-          <% @qr.modules.each_index do |x| %>
-            <tr>
-              <% @qr.modules.each_index do |y| %>
-                <% if @qr.dark?(x,y) %>
-                  <td class="black"/>
-                <% else %>
-                  <td class="white"/>
-                <% end %>
-              <% end %>
-            </tr>
-          <% end %>
-        </table>
-      </dd>
-
+  <dt>QR Code:</dt>
 
 </dl>
+
+<br/>
+
+<div class="row">
+  <div class="col-sm-4 col-sm-offset-4">
+    <%= image_tag @qr_png %>
+  </div>
+</div>

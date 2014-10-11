@@ -10,12 +10,15 @@ class QrcodesController < ApplicationController
   # GET /qrcodes/1
   # GET /qrcodes/1.json
   def show
-    @qr = RQRCode::QRCode.new( @qrcode.text_to_encode, size: @qrcode.size, level: @qrcode.level.to_sym )
+    @qr = RQRCode::QRCode.new( @qrcode.text_to_encode, size: @qrcode.size, level: @qrcode.level[0].downcase.to_sym )
+    @qr_png = @qr.to_img.resize(400, 400).to_data_url
+
   end
 
   # GET /qrcodes/new
   def new
     @qrcode = Qrcode.new
+
   end
 
   # GET /qrcodes/1/edit
@@ -26,7 +29,7 @@ class QrcodesController < ApplicationController
   # POST /qrcodes.json
   def create
     @qrcode = Qrcode.new(qrcode_params)
-
+    @qrcode.level = params[:level]
     respond_to do |format|
       if @qrcode.save
         format.html { redirect_to @qrcode, notice: 'Qrcode was successfully created.' }
@@ -43,6 +46,8 @@ class QrcodesController < ApplicationController
   def update
     respond_to do |format|
       if @qrcode.update(qrcode_params)
+        @qrcode.level = params[:level]
+        @qrcode.save
         format.html { redirect_to @qrcode, notice: 'Qrcode was successfully updated.' }
         format.json { render :show, status: :ok, location: @qrcode }
       else

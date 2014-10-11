@@ -11,9 +11,8 @@
     <thead>
       <tr>
             <th>Text to encode</th>
-            <th>Size</th>
-            <th>Level</th>
-            <th></th>
+            <th>Version</th>
+            <th>Error Correction Level</th>
         <th></th>
         <th></th>
       </tr>
@@ -21,12 +20,14 @@
 
     <tbody>
       <%= content_tag_for(:tr, @qrcodes) do |qrcode| %>
-            <td><%= qrcode.text_to_encode %></td>
-            <td><%= qrcode.size %></td>
-            <td><%= qrcode.level %></td>
-            <td><%= link_to 'Show', qrcode %></td>
-        <td><%= link_to 'Edit', edit_qrcode_path(qrcode) %></td>
-        <td><%= link_to 'Destroy', qrcode, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to qrcode_path(qrcode)  do %>
+              <%= qrcode.text_to_encode %>
+            <% end %>
+        </td>
+        <td><%= qrcode.size %></td>
+        <td><%= qrcode.level %></td>
+        <td><%= link_to 'Edit', edit_qrcode_path(qrcode), class: 'btn btn-xs btn-primary' %></td>
+        <td><%= link_to 'Delete', qrcode, method: :delete, class: 'btn btn-xs btn-warning', data: { confirm: 'Are you sure?' } %></td>
       <% end %>
     </tbody>
   </table>
